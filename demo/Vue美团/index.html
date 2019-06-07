@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset=utf-8>
+    <meta name=viewport content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no">
+    <title>webApp</title>
+    <link rel=stylesheet href=static/css/reset.css> <link href=./static/css/app.70986cad67da9f2d13d225f1cdb027dd.css
+        rel=stylesheet>
+    <link rel="stylesheet" href="../../Share/css/Share.css">
+</head>
+
+<body>
+    <div id=app></div>
+    <div class="btn">
+        <svg t="1559616228111" class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+            xmlns="http://www.w3.org/2000/svg" p-id="3375" xmlns:xlink="http://www.w3.org/1999/xlink" width="200"
+            height="200">
+            <defs>
+                <style type="text/css"></style>
+            </defs>
+            <path
+                d="M340.992 238.907077h284.16c219.766154 0 397.863385 166.951385 397.863385 372.854154 0 205.942154-178.136615 372.854154-397.863385 372.854154H0v-106.535385h625.152c156.947692 0 284.199385-119.217231 284.199385-266.318769 0-147.062154-127.212308-266.318769-284.199385-266.318769H340.992V238.907077z"
+                fill="#008DFF" p-id="3376"></path>
+            <path d="M56.832 292.194462l397.824-213.07077v426.141539z" fill="#008DFF" p-id="3377"></path>
+        </svg>
+        <span id="return">demo</span>
+    </div>
+    <script type=text/javascript src=./static/js/manifest.3ad1d5771e9b13dbdad2.js> </script> <script
+        type=text/javascript src=./static/js/vendor.32254d80ed4d102fb05a.js> </script> <script type=text/javascript
+        src=./static/js/app.f739bdb569ddc2e94f36.js> </script> <script>
+
+            window.onload = function () {
+                var oBtn = document.getElementsByClassName('btn')[0];
+                oBtn.onclick = function () {
+                    if (window.localStorage) {
+                        var data = document.getElementById('return').innerText;
+                        localStorage.value = data;
+                        location.href = '../../index.html'
+                    } else {
+                        alert('不支持Html5')
+                    }
+                }
+                alert('请手机查看')
+            }
+        </script>
+</body>
+
+</html>

@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>js弹幕</title>
+    <link rel="stylesheet" href="../../Share/css/Share.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 1200px;
+            height: 600px;
+            margin: 0 auto;
+            background-color: #ccc;
+            border-radius: 0;
+        }
+
+        .barrage {
+            float: left;
+            width: 1000px;
+            height: 600px;
+            background-color: #000;
+            margin-top: 60px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .barrage span {
+            color: #fff;
+            margin: 10px;
+            position: absolute;
+            top: 0;
+            right: 0;
+            white-space: nowrap;
+        }
+
+        .chatRoom {
+            width: 198px;
+            height: 598px;
+            float: right;
+            background-color: #fff;
+            margin-top: 60px;
+            border: 1px solid #ccc;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .chatRoom .roll {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+        }
+
+        .chatRoom .roll span {
+            display: block;
+            margin: 6px;
+            width: 100% !important;
+            float: left !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: normal !important;
+        }
+
+        .inputBox {
+            width: 1200px;
+            height: 60px;
+            margin: 0 auto;
+        }
+
+        .inputBox input {
+            width: 998px;
+            height: 58px;
+            border: 1px solid #ccc;
+            line-height: 58px;
+            font-size: 24px;
+        }
+
+        .inputBox button {
+            width: 195px;
+            height: 60px;
+            outline: none;
+            border: none;
+            color: #fff;
+            background-color: #f4511e;
+            text-align: center;
+            font-size: 28px;
+            border-radius: 4px;
+            transition: all 0.5s;
+            cursor: pointer;
+            margin-top: 8px;
+        }
+
+        .inputBox button span {
+            cursor: pointer;
+            display: inline-block;
+            position: relative;
+            transition: 0.5s;
+        }
+
+        .inputBox button span:after {
+            content: '»';
+            position: absolute;
+            opacity: 0;
+            top: 0;
+            right: -20px;
+            transition: 0.5s;
+            /* 过渡属性 */
+        }
+
+        .inputBox button:hover span {
+            padding-right: 25px;
+        }
+
+        .inputBox button:hover span:after {
+            opacity: 1;
+            right: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="barrage"></div>
+        <div class="chatRoom">
+            <div class="roll"></div>
+        </div>
+    </div>
+
+    <div class="inputBox">
+        <input type="text">
+        <button>
+            <span>发送</span>
+        </button>
+    </div>
+    <div class="btn">
+        <svg t="1559616228111" class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+            xmlns="http://www.w3.org/2000/svg" p-id="3375" xmlns:xlink="http://www.w3.org/1999/xlink" width="200"
+            height="200">
+            <defs>
+                <style type="text/css"></style>
+            </defs>
+            <path
+                d="M340.992 238.907077h284.16c219.766154 0 397.863385 166.951385 397.863385 372.854154 0 205.942154-178.136615 372.854154-397.863385 372.854154H0v-106.535385h625.152c156.947692 0 284.199385-119.217231 284.199385-266.318769 0-147.062154-127.212308-266.318769-284.199385-266.318769H340.992V238.907077z"
+                fill="#008DFF" p-id="3376"></path>
+            <path d="M56.832 292.194462l397.824-213.07077v426.141539z" fill="#008DFF" p-id="3377"></path>
+        </svg>
+        <span id="return">demo</span>
+    </div>
+
+    <script>
+        var barrage = document.getElementsByClassName('barrage')[0];
+        var chatRoom = document.getElementsByClassName('chatRoom')[0];
+        var roll = document.getElementsByClassName('roll')[0];
+        var span = roll.getElementsByTagName('span');
+        var input = document.getElementsByTagName('input')[0];
+        var btn = document.getElementsByTagName('button')[0];
+        var oBtn = document.getElementsByClassName('btn')[0];
+        var randomArr = [];
+        var chatArr = [];
+        var barrageArr = [];
+
+        // 初始化函数
+        function init(e) {
+            input.onkeydown = function (e) {
+                var e = window.event || e;
+                if (e.keyCode == 13) {
+                    btn.click()
+                }
+            }
+            send()
+            oBtn.onclick = function () {
+                if (window.localStorage) {
+                    var data = document.getElementById('return').innerText;
+                    localStorage.value = data;
+                    location.href = '../../index.html'
+                } else {
+                    alert('不支持Html5')
+                }
+            }
+        }
+        window.init()
+
+        // 发送数据
+        function send() {
+            btn.onclick = function () {
+                if (!input.value) {
+                    alert('您未输入...')
+                } else {
+                    var spanHeight = 0;
+                    var index = randomNumber()
+                    var value = index + ':' + input.value;
+                    input.value = ''
+                    chat(value)
+                    // 自动向上顶，保证最新消息的呈现
+                    for (var j = 0; j < span.length; j++) {
+                        spanHeight += span[j].clientHeight + 12
+                    }
+                    if (spanHeight >= roll.clientHeight) {
+                        var spnaHeightNum = -spanHeight + roll.clientHeight
+                        console.log("spnaHeightNum is " + spnaHeightNum)
+                        roll.style.top = spnaHeightNum + 'px';
+                    }
+                }
+            }
+        }
+
+        // 渲染聊天室dom
+        function chat(value) {
+            chatArr.push(value)
+            for (var i = 0; i < chatArr.length; i++) {
+                var data = `用户00` + chatArr[i];
+            }
+            var span = document.createElement("span");
+            span.innerHTML = data;
+            roll.appendChild(span)
+            barrageShow(chatArr)
+        }
+
+        // 渲染弹幕dom
+        function barrageShow(arr) {
+            for (var i = 0; i < arr.length; i++) {
+                var data = arr[i].split(":").pop();
+            }
+            var danmo = document.createElement("span");
+            danmo.innerText = data;
+            barrage.appendChild(danmo)
+            move(danmo)
+        }
+
+        // 弹幕动起来
+        function move(obj) {
+            var seed = 5;
+            var distance = 900;
+            var opacityNum = 1;
+            // 定义随机字体大小
+            var oFontSize = parseInt(Math.random() * 10 + 16);
+            // 创建随机颜色
+            var oFontColor = '#' + Math.floor(Math.random() * 16777215).toString(16);
+            // 随机高度
+            var oMax = barrage.offsetHeight - oFontSize;
+            var oMin = barrage.offsetTop;
+            var oHeight = Math.floor(Math.random() * (oMax - oMin) + oMin);
+            obj.style.top = oHeight + 'px';
+            obj.style.fontSize = oFontSize + "px";
+            obj.style.color = oFontColor;
+            // 自动向左移动
+            var timer = setInterval(function () {
+                obj.style.right = seed + 'px';
+                if (seed < 850) {
+                    obj.style.opacity = 1;
+                } else {
+                    obj.style.opacity = opacityNum;
+                }
+                if (seed > distance) {
+                    clearInterval(timer);
+                    barrage.removeChild(obj);
+                } else {
+                    seed++;
+                }
+            }, 10)
+        }
+
+
+        // 随机数
+        function randomNumber(number) {
+            var number = typeof number !== 'undefined' ? number : 1;
+            var num = Math.round(Math.random() * 10) * number;
+            if (!randomArr[num]) {
+                randomArr[num] = true
+                return num
+            } else {
+                if (num !== 0) {
+                    return randomNumber(num)
+                } else {
+                    num = 1;
+                    return randomNumber(num)
+                }
+            }
+        }
+
+
+
+
+    </script>
+</body>
+
+</html>

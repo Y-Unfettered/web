@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>js弹层</title>
+    <link rel="stylesheet" href="../../Share/css/Share.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .oBtn {
+            position: fixed;
+            top: 100px;
+            left: 200px;
+            width: 100px;
+            height: 30px;
+            background: linear-gradient(to left, #0054ff, #00e4ff);
+            /* 线性渐变 */
+            cursor: pointer;
+            color: #fff;
+            font-weight: bold;
+            font-size: 12px;
+            text-align: center;
+            line-height: 30px;
+        }
+
+        .container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            margin: 0;
+            border-radius: 0;
+        }
+
+        .container .box {
+            position: relative;
+            width: 600px;
+            height: 600px;
+            margin: 60px auto;
+        }
+
+        .container .box img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container .box .left,
+        .right {
+            width: 50px;
+            height: 50px;
+            font-size: 24px;
+            line-height: 50px;
+            text-align: center;
+            background-color: rgb(105, 102, 102);
+            color: #aaa;
+            border-radius: 50%;
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            opacity: 0.5;
+            margin-top: -25px;
+        }
+
+        .container .box .left {
+            left: 0;
+            margin-left: 20px;
+        }
+
+        .container .box .right {
+            right: 0;
+            margin-right: 20px;
+        }
+
+        .container .box .left:hover {
+            opacity: 1;
+            color: #fff;
+        }
+
+        .container .box .right:hover {
+            color: #fff;
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="oBtn">
+        点我打开弹层
+    </div>
+    <div class="container">
+        <div class="box">
+            <img class="img" src="img/0.jpeg" alt="">
+            <div class="left">
+                <span>&lt;</span>
+            </div>
+            <div class="right">
+                <span>&gt;</span>
+            </div>
+        </div>
+    </div>
+    <div class="btn">
+        <svg t="1559616228111" class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+            xmlns="http://www.w3.org/2000/svg" p-id="3375" xmlns:xlink="http://www.w3.org/1999/xlink" width="200"
+            height="200">
+            <defs>
+                <style type="text/css"></style>
+            </defs>
+            <path
+                d="M340.992 238.907077h284.16c219.766154 0 397.863385 166.951385 397.863385 372.854154 0 205.942154-178.136615 372.854154-397.863385 372.854154H0v-106.535385h625.152c156.947692 0 284.199385-119.217231 284.199385-266.318769 0-147.062154-127.212308-266.318769-284.199385-266.318769H340.992V238.907077z"
+                fill="#008DFF" p-id="3376"></path>
+            <path d="M56.832 292.194462l397.824-213.07077v426.141539z" fill="#008DFF" p-id="3377"></path>
+        </svg>
+        <span id="return">demo</span>
+    </div>
+    <script>
+        var index = 0;
+        var oBtn = document.getElementsByClassName('oBtn')[0];
+        var container = document.getElementsByClassName('container')[0];
+        var leftBtn = document.getElementsByClassName('left')[0];
+        var rightBtn = document.getElementsByClassName('right')[0];
+        var img = document.getElementsByClassName('img')[0];
+        var box = document.getElementsByClassName('box')[0];
+        var btn = document.getElementsByClassName('btn')[0];
+        var imgList = [
+            { img: "img/0.jpeg" },
+            { img: "img/1.jpg" },
+            { img: "img/2.jpeg" },
+            { img: "img/3.jpg" },
+            { img: "img/4.jpeg" },
+            { img: "img/5.jpeg" },
+            { img: "img/6.jpg" },
+            { img: "img/7.jpg" },
+            { img: "img/8.jpeg" },
+        ]
+
+        function init() {
+            oBtn.onclick = function () {
+                container.style.display = 'block';
+            }
+
+            container.onclick = function () {
+                container.style.display = 'none';
+            }
+
+            box.onclick = function (e) {
+                e.stopPropagation(); //阻止事件冒泡
+            }
+            // 不阻止时间冒泡会导致 box点击也会执行container.onclick
+
+            rightBtn.onclick = function () {
+                imgListExchange(1)
+            }
+
+            leftBtn.onclick = function () {
+                imgListExchange(-1)
+            }
+
+            btn.onclick = function () {
+                if (window.localStorage) {
+                    var data = document.getElementById('return').innerText;
+                    localStorage.value = data;
+                    location.href = '../../index.html'
+                } else {
+                    alert('不支持Html5')
+                }
+            }
+        }
+        init()
+
+        function imgListExchange(num) {
+            if (num == 1) {
+                index++;
+                if (index == imgList.length) {
+                    index = 0
+                }
+            } else if (num == -1) {
+
+                if (index <= 0) {
+                    index = imgList.length
+                }
+                index--;
+            }
+            img.setAttribute('src', imgList[index].img)
+            // setAttribute()方法添加指定的属性，并为其赋指定的值
+        }
+
+
+    </script>
+</body>
+
+</html>

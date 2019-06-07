@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>js图片放大镜</title>
+    <link rel="stylesheet" href="../../Share/css/Share.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        .leftBox {
+            width: 400px;
+            height: 400px;
+            margin: 100px;
+            float: left;
+            position: relative;
+            box-shadow: 3px 3px 10px 0 #111111;
+            /*给图片施加阴影效果 */
+            -webkit-box-shadow: 3px 3px 10px 0 #111111;
+            /*兼容性处理*/
+            -moz-box-shadow: 3px 3px 10px 0 #111111;
+        }
+
+        .leftBox img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .leftBox .shelterBox {
+            display: none;
+            /*将小方块盒子隐藏*/
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100px;
+            height: 100px;
+            background: #000;
+            opacity: 0.3;
+            cursor: move;
+            /*改变鼠标的形状*/
+        }
+
+        .rightBox {
+            display: none;
+            /*将右边div隐藏*/
+            width: 400px;
+            height: 400px;
+            margin-top: 100px;
+            float: left;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .rightBox img {
+            width: 200%;
+            height: 200%;
+            position: absolute;
+            left: 0px;
+            top: 0px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="leftBox">
+        <img src="img/0.jpeg" alt="">
+        <div class="shelterBox"></div>
+    </div>
+    <div class="rightBox">
+        <img src="img/0.jpeg" alt="">
+    </div>
+    <div class="btn">
+        <svg t="1559616228111" class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+            xmlns="http://www.w3.org/2000/svg" p-id="3375" xmlns:xlink="http://www.w3.org/1999/xlink" width="200"
+            height="200">
+            <defs>
+                <style type="text/css"></style>
+            </defs>
+            <path
+                d="M340.992 238.907077h284.16c219.766154 0 397.863385 166.951385 397.863385 372.854154 0 205.942154-178.136615 372.854154-397.863385 372.854154H0v-106.535385h625.152c156.947692 0 284.199385-119.217231 284.199385-266.318769 0-147.062154-127.212308-266.318769-284.199385-266.318769H340.992V238.907077z"
+                fill="#008DFF" p-id="3376"></path>
+            <path d="M56.832 292.194462l397.824-213.07077v426.141539z" fill="#008DFF" p-id="3377"></path>
+        </svg>
+        <span id="return">demo</span>
+    </div>
+    <script>
+        var leftBox = document.getElementsByClassName('leftBox')[0];
+        var rightBox = document.getElementsByClassName('rightBox')[0];
+        var shelterBox = document.getElementsByClassName('shelterBox')[0];
+        var rightImg = rightBox.getElementsByTagName("img")[0];
+        var btn = document.getElementsByClassName('btn')[0];
+        // Event是获取事件对象，对象代表事件的状态，
+        // 比如事件在其中发生的元素、键盘按键的状态、鼠标的位置、鼠标按钮的状态,envet是windows的一个属性。
+        // 简写 e
+        function enlargeImg(e) {
+            var e = e || window.event;   //实现兼容
+            // 紧接着我们就要思考一下如何实现效果
+            // 淘宝中的放大我相信都看到过,用一个方块来代替放大镜,在旁边突出放大
+            // 所以我们需要得到我们鼠标的位置,来确定放大那个部分的图片
+            // 就要来学习获取鼠标位置
+
+            //e.clientY:返回事件触发时鼠标相对于元素视口的Y坐标。
+            //e.clientX:返回事件触发时鼠标相对于元素视口的X坐标。
+            //这里的元素视口实际上代指就是浏览器，clientX是鼠标距离浏览器左边框的距离，clientY是鼠标距离浏览器上边框的距离。
+
+            //offsetTop获取对象相对于版面或由offsetTop属性指定的父坐标的计算顶端位置。这里就是左边的div相对于body即浏览器窗口的纵向距离
+            //offsetLeft获取对象相对于版面或由offsetLeft属性指定的父坐标的计算顶端位置。这里就是左边的div相对于body即浏览器窗口的纵横向距离
+            //offsetHeight是对象的可见高度。这里是指小滑块的高度
+            //offsetHeight是对象的可见宽度。这里是指小滑块的宽度
+
+            var top = e.clientY - leftBox.offsetTop - shelterBox.offsetHeight / 2;
+            var left = e.clientX - leftBox.offsetLeft - shelterBox.offsetWidth / 2;
+            // 除以2是为了让我们的指针位置放在中间
+
+            //边界判断
+            var maxtop = leftBox.offsetHeight - shelterBox.offsetHeight; //获取小滑块最大纵向移动距离
+            var maxleft = leftBox.offsetWidth - shelterBox.offsetWidth;  //获取小滑块最大横向移动距离
+            var mintop = 0;  //获取小滑块最小纵向移动距离
+            var minleft = 0;  //获取小滑块最大纵向移动距离
+            var mvtop;  //定义小滑块的纵向移动距离
+            var mvleft;  //定义小滑块的横向移动距离
+
+            if (top < mintop) {
+                shelterBox.style.top = mintop + 'px';
+                mvtop = mintop
+            } else if (top > maxtop) {
+                shelterBox.style.top = maxtop + 'px';
+                mvtop = maxtop
+            } else {
+                shelterBox.style.top = top + "px";
+                mvtop = top;
+                //不超过边界，则小滑块的垂直移动距离就等于top,即小滑块的顶部到左边div的垂直距离 
+            }
+
+            if (left < minleft) {
+                shelterBox.style.left = minleft + 'px';
+                mvleft = minleft
+            } else if (left > maxleft) {
+                shelterBox.style.left = maxleft + 'px';
+                mvleft = maxleft
+            } else {
+                shelterBox.style.left = left + "px";
+                mvleft = left;
+                //不超过边界，则小滑块的垂直移动距离就等于top,即小滑块的顶部到左边div的垂直距离 
+            }
+            rightImg.style.top = -mvtop * 2 + "px";
+            rightImg.style.left = -mvleft * 2 + "px";
+        }
+        // 鼠标移入  在之前的轮播图也用过，但是好像忘了说明
+        leftBox.onmousemove = function (e) {
+            var e = e || window.event;
+            shelterBox.style.display = "block";
+            enlargeImg(e);
+            rightBox.style.display = "block";
+        }
+
+        // 鼠标移出
+        leftBox.onmouseleave = function (e) {
+            var e = e || window.event;
+            shelterBox.style.display = "none";
+            rightBox.style.display = "none";
+        }
+
+        btn.onclick = function () {
+            if (window.localStorage) {
+                var data = document.getElementById('return').innerText;
+                localStorage.value = data;
+                location.href = '../../index.html'
+            } else {
+                alert('不支持Html5')
+            }
+        }
+    </script>
+</body>
+
+</html>

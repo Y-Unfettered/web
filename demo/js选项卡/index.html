@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>js选项卡</title>
+    <link rel="stylesheet" href="../../Share/css/Share.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .nav {
+            width: 1000px;
+            height: 66px;
+            margin: 0 auto;
+        }
+
+        .nav ul {
+            width: 1000px;
+            height: 66px;
+        }
+
+        .nav ul li {
+            float: left;
+            width: 25%;
+            height: 66px;
+            line-height: 66px;
+            list-style: none;
+            text-decoration: none;
+        }
+
+        .active {
+            background-color: #000;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .nav ul li:hover {
+            background-color: #000;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .tab {
+            width: 1000px;
+            height: 600px;
+            margin: 0 auto;
+        }
+
+        .tab p {
+            font-size: 24px;
+            color: #fff;
+            margin: 0 auto;
+            height: 600px;
+            line-height: 600px;
+        }
+    </style>
+</head>
+
+<body>
+    <!--导航栏部分HTML代码-->
+    <nav class="nav">
+        <ul>
+            <li class="active">选卡1</li>
+            <li>选卡2</li>
+            <li>选卡3</li>
+            <li>选卡4</li>
+        </ul>
+    </nav>
+    <!--内容部分HTML代码-->
+    <div class="box">
+        <section class="tab" style="background-color: tomato">
+            <p>内容1</p>
+        </section>
+        <section class="tab" style="background-color: cyan">
+            <p>内容2</p>
+        </section>
+        <section class="tab" style="background-color: blueviolet">
+            <p>内容3</p>
+        </section>
+        <section class="tab" style="background-color: gold">
+            <p>内容4</p>
+        </section>
+    </div>
+    <div class="btn">
+        <svg t="1559616228111" class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+            xmlns="http://www.w3.org/2000/svg" p-id="3375" xmlns:xlink="http://www.w3.org/1999/xlink" width="200"
+            height="200">
+            <defs>
+                <style type="text/css"></style>
+            </defs>
+            <path
+                d="M340.992 238.907077h284.16c219.766154 0 397.863385 166.951385 397.863385 372.854154 0 205.942154-178.136615 372.854154-397.863385 372.854154H0v-106.535385h625.152c156.947692 0 284.199385-119.217231 284.199385-266.318769 0-147.062154-127.212308-266.318769-284.199385-266.318769H340.992V238.907077z"
+                fill="#008DFF" p-id="3376"></path>
+            <path d="M56.832 292.194462l397.824-213.07077v426.141539z" fill="#008DFF" p-id="3377"></path>
+        </svg>
+        <span id="return">demo</span>
+    </div>
+    <script>
+        // 今天在昨天的基础上加上一些代码，实现自动的跳转选项
+        window.onload = function () {
+            var nav = document.getElementsByClassName('nav')[0];
+            var oNav = nav.getElementsByTagName('li');
+            var box = document.getElementsByClassName('box')[0];
+            var oDiv = box.getElementsByClassName('tab');
+            var oBtn = document.getElementsByClassName('btn')[0];
+            var index = 0;                  //当前的选项位置
+            var timer = null;               //定时器
+
+            oBtn.onclick = function () {
+                if (window.localStorage) {
+                    var data = document.getElementById('return').innerText;
+                    localStorage.value = data;
+                    location.href = '../../index.html'
+                } else {
+                    alert('不支持Html5')
+                }
+            }
+            for (var i = 0; i < oNav.length; i++) {
+                oNav[i].index = i;
+                oNav[i].onclick = function () {
+                    for (var i = 0; i < oNav.length; i++) {
+                        oNav[i].className = '';
+                        oDiv[i].style.display = "none";
+                    }
+                    this.className = 'active';
+                    oDiv[this.index].style.display = "block"
+                    index = this.index
+                }
+                for (var m = 1; m < oNav.length; m++) {
+                    oNav[m].className = '';
+                    oDiv[m].style.display = "none";
+                }
+            }
+
+            //添加定时器前做一次清除，避免多个定时器导致页面卡顿
+            if (timer) {
+                clearInterval(timer);
+                timer = null;
+            }
+
+            // 自动切换选项就需要用到定时器
+            // 每隔3秒切换一次
+            //添加定时器，改变当前高亮的索引
+            timer = setInterval(function () {
+                index++;
+                if (index >= oNav.length) {
+                    index = 0;
+                }
+                changeOption(index);
+            }, 3000);
+
+            function changeOption(curIndex) {
+                // console.log(curIndex);
+                for (var i = 0; i < oNav.length; i++) {
+                    oNav[i].className = '';
+                    oDiv[i].style.display = 'none';
+                }
+                //高亮显示当前页签
+                oNav[curIndex].className = 'active';
+                oDiv[curIndex].style.display = 'block';
+                index = curIndex;
+            }
+        };
+    </script>
+</body>
+
+</html>

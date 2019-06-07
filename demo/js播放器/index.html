@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>js播放器</title>
+    <link rel="stylesheet" href="../../Share/css/Share.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: rgb(41, 36, 36);
+        }
+
+        .container {
+            width: 800px;
+            height: 600px;
+            margin: 60px auto 0;
+            background-color: #000;
+        }
+
+        .container .audio {
+            width: 400px;
+            height: 600px;
+            background-color: rgb(97, 180, 235);
+            float: left;
+        }
+
+        .container .audio .img {
+            width: 100px;
+            height: 100px;
+            background-color: #fff;
+            float: left;
+        }
+
+        .container .audio .img img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .container .audio .icons {
+            width: 300px;
+            height: 100px;
+            background-color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .container .audio .icons .icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .container .audio .icons .icon:hover {
+            background-color: #ddd;
+            border-radius: 15px;
+        }
+
+        .container .audio .icons .icon:hover svg {
+            fill: white;
+        }
+
+        .container .audio .icons .icon .play,
+        .pause {
+            font-size: 20px;
+        }
+
+        .container .audio .icons .icon .prev {
+            transform: rotate(180deg);
+        }
+
+        .container .audio .icons .icon .pause {
+            display: none;
+        }
+
+        .container .audio .icons .icon svg {
+            width: 2em;
+            height: 2em;
+            fill: #d7dce2;
+            cursor: pointer;
+            font-size: 30px;
+        }
+
+        .container .audio .speed {
+            width: 350px;
+            height: 40px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        .container .audio .speed .songtimed {
+            width: 50px;
+            height: 40px;
+            line-height: 40px;
+        }
+
+        .container .audio .speed .par {
+            width: 200px;
+            height: 4px;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+
+        .container .audio .speed .par .solid {
+            width: 0px;
+            height: 4px;
+            border-radius: 4px;
+            background-color: #000;
+        }
+
+        .container .audio .speed .songtiming {
+            width: 50px;
+            height: 40px;
+            line-height: 40px;
+        }
+
+        .container .audio .list {
+            width: 350px;
+            height: 410px;
+            margin: 25px auto;
+            background-color: #ddd;
+        }
+
+        .container .audio .list span {
+            display: block;
+        }
+
+        .container .lrcbox {
+            width: 400px;
+            height: 600px;
+            background-color: rgb(8, 8, 8);
+            margin-left: 400px;
+            color: #fff;
+            overflow: hidden;
+        }
+
+        .container .lrc {
+            text-align: center;
+        }
+
+        .container .lrc .selection {
+            font-weight: bolder;
+            transition: all 0.1s ease-in-out;
+        }
+
+        .container .lrc div {
+            width: 300px;
+            height: 42px;
+            line-height: 42px;
+            overflow: hidden;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="audio">
+            <div class="img">
+                <img src="img/0.jpeg" alt="">
+            </div>
+            <div class="icons">
+                <div class="icon">
+                    <svg class="prev" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                        <path d="M26.695 34.434v31.132L54.5 49.998z"></path>
+                        <path
+                            d="M24.07 34.434v31.132c0 2.018 2.222 3.234 3.95 2.267l27.804-15.568c1.706-.955 1.707-3.578 0-4.533L28.02 32.168c-2.957-1.655-5.604 2.88-2.649 4.533l27.805 15.564v-4.533L25.371 63.3l3.95 2.267V34.435c-.001-3.387-5.251-3.387-5.251-.001z">
+                        </path>
+                        <g>
+                            <path d="M55.5 34.434v31.132l27.805-15.568z"></path>
+                            <path
+                                d="M52.875 34.434v31.132c0 2.018 2.222 3.234 3.949 2.267 9.27-5.189 18.537-10.379 27.805-15.568 1.705-.955 1.705-3.578 0-4.533L56.824 32.168c-2.957-1.655-5.604 2.88-2.648 4.533l27.803 15.564v-4.533L54.176 63.3l3.949 2.267V34.435c0-3.387-5.25-3.387-5.25-.001z">
+                            </path>
+                        </g>
+                    </svg>
+                </div>
+                <div class="icon">
+                    <svg class="play" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+                        <path
+                            d="M51.109 30.335l-36-24A2 2 0 0 0 12 8v48a2.003 2.003 0 0 0 2 2c.388 0 .775-.113 1.109-.336l36-24a2 2 0 0 0 0-3.329z">
+                        </path>
+                    </svg>
+                    <svg class="pause" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                        <path
+                            d="M22.537 8.046h17.791c1.104 0 2.003.898 2.003 1.993v79.912a2.005 2.005 0 0 1-2.003 2.003h-17.79a2.005 2.005 0 0 1-2.003-2.003V10.04c0-1.095.898-1.993 2.002-1.993zM59.672 8.046h17.8c1.095 0 1.993.898 1.993 1.993v79.912a2.003 2.003 0 0 1-1.993 2.003h-17.8a1.997 1.997 0 0 1-1.993-2.003V10.04c0-1.095.889-1.993 1.993-1.993z">
+                        </path>
+                    </svg>
+                </div>
+                <div class="icon">
+                    <svg class="next" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                        <path d="M26.695 34.434v31.132L54.5 49.998z"></path>
+                        <path
+                            d="M24.07 34.434v31.132c0 2.018 2.222 3.234 3.95 2.267l27.804-15.568c1.706-.955 1.707-3.578 0-4.533L28.02 32.168c-2.957-1.655-5.604 2.88-2.649 4.533l27.805 15.564v-4.533L25.371 63.3l3.95 2.267V34.435c-.001-3.387-5.251-3.387-5.251-.001z">
+                        </path>
+                        <g>
+                            <path d="M55.5 34.434v31.132l27.805-15.568z"></path>
+                            <path
+                                d="M52.875 34.434v31.132c0 2.018 2.222 3.234 3.949 2.267 9.27-5.189 18.537-10.379 27.805-15.568 1.705-.955 1.705-3.578 0-4.533L56.824 32.168c-2.957-1.655-5.604 2.88-2.648 4.533l27.803 15.564v-4.533L54.176 63.3l3.949 2.267V34.435c0-3.387-5.25-3.387-5.25-.001z">
+                            </path>
+                        </g>
+                    </svg>
+                </div>
+            </div>
+            <div class="speed">
+                <span class="songtimed">00:00</span>
+                <div class="par" onmousedown="changeProgress(event)">
+                    <div class="solid"></div>
+                </div>
+                <span class="songtiming">00:00</span>
+            </div>
+            <div class="list"></div>
+        </div>
+        <div class="lrcbox">
+            <div class="lrc"></div>
+        </div>
+    </div>
+    <div class="btn">
+        <svg t="1559616228111" class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+            xmlns="http://www.w3.org/2000/svg" p-id="3375" xmlns:xlink="http://www.w3.org/1999/xlink" width="200"
+            height="200">
+            <defs>
+                <style type="text/css"></style>
+            </defs>
+            <path
+                d="M340.992 238.907077h284.16c219.766154 0 397.863385 166.951385 397.863385 372.854154 0 205.942154-178.136615 372.854154-397.863385 372.854154H0v-106.535385h625.152c156.947692 0 284.199385-119.217231 284.199385-266.318769 0-147.062154-127.212308-266.318769-284.199385-266.318769H340.992V238.907077z"
+                fill="#008DFF" p-id="3376"></path>
+            <path d="M56.832 292.194462l397.824-213.07077v426.141539z" fill="#008DFF" p-id="3377"></path>
+        </svg>
+        <span id="return">demo</span>
+    </div>
+    <textarea id="lrc_content" cols="30" style="display: none">
+            [00:00.000]I see your monsters, I see your pain.↵[00:05.140]Tell me your problems,I'll chase them away.
+            [00:10.960]I'll be your lighthouse.
+            [00:13.820]I'll make it okay.
+            [00:16.240]When I see your monsters
+            [00:18.960]I'll stand there so brave,
+            [00:21.110]and chase them all away.
+            [00:26.890]In the dark we, we, we,
+            [00:29.950]stand apart we, we,
+            [00:32.610]never see that the things we need are staring right at us.↵
+            [00:38.230]You just want to hide, hide,
+            [00:40.780]never show your smile, smile, smile.
+            [00:43.600]Stand alone when you need someone
+            [00:46.410]its the hardest thing of all
+            [00:48.320]that you see are the bad, bad, bad memories
+            [00:53.580]take your time, you'll find it.
+            [00:57.090]I see your monsters,
+            [01:00.010]I see your pain.
+            [01:02.670]Tell me your problems,
+            [01:05.380]I'll chase them away.
+            [01:07.910]I'll be your lighthouse.
+            [01:10.710]I'll make it okay.
+            [01:13.320]When I see your monsters
+            [01:16.090]I'll stand there so brave,
+            [01:18.240]and chase them all away.
+            [01:22.060]I can see the sky, sky, sky,
+            [01:24.420]beautiful tonight, night
+            [01:27.210]when you breathe why cant you see
+            [01:29.870]the clouds are in your head
+            [01:32.950]I will stay there there, there, there,
+            [01:35.310]no need to fear, fear,
+            [01:37.910]when you need to talk it out with someone you can trust.
+            [01:42.620]What you see are the bad, bad, bad memories
+            [01:48.610]take your time you'll find it.
+            [01:51.810]I see your monsters,
+            [01:54.530]I see your pain.
+            [01:57.230]Tell me your problems,
+            [01:59.930]I'll chase them away.
+            [02:02.640]I'll be your lighthouse.
+            [02:05.380]I'll make it okay.
+            [02:07.690]When I see your monsters
+            [02:10.300]I'll stand there so brave,
+            [02:12.410]and chase them all away.
+            [02:18.030]I'll chase them all away
+            [02:26.310]You've got the chance to see the light,
+            [02:32.540]even in the darkest night
+            [02:37.840]And I will be here like you were for me,
+            [02:44.410]so just let me in.
+            [02:48.530]Cause... I see your monsters,
+            [02:51.440]I see your pain.
+            [02:54.190]Tell me your problems,
+            [02:56.900]I'll chase them away.
+            [02:59.620]I'll be your lighthouse.
+            [03:02.220]I'll make it okay.
+            [03:04.820]When I see your monsters
+            [03:07.330]I'll stand there so brave,
+            [03:11.620]I see your monsters,
+            [03:13.750]I see your pain.
+            [03:15.810]Tell me your problems,
+            [03:18.580]I'll chase them away.
+            [03:21.030]I'll be your lighthouse.
+            [03:23.800]I'll make it okay.
+            [03:26.500]When I see your monsters
+            [03:29.010]I'll stand there so brave,
+            [03:31.220]and chase them all away.
+        </textarea>
+    <script>
+        var songList = [
+            { musicSrc: "http://music.163.com/song/media/outer/url?id=28481189", musicName: 'Montster' },
+            { musicSrc: "http://music.163.com/song/media/outer/url?id=399341255", musicName: '李宇春-唐人街-(电影《唐人街探案》主题曲)' },
+            { musicSrc: 'http://music.163.com/song/media/outer/url?id=407002091', musicName: '李宗盛-山丘' },
+            { musicSrc: 'http://music.163.com/song/media/outer/url?id=5255662', musicName: '林忆莲 / 李宗盛-当爱已成往事' },
+        ]
+
+        // 创建一个audio对象
+        var Audio = document.createElement('AUDIO');
+        // 播放状态
+        var playstatus = false
+        //默认播放第一首
+        var PlayingIndex = 0;
+        //正在播放的歌曲
+        var MusicPlaying = songList[PlayingIndex].musicSrc;
+        //歌词
+        var lrc = document.getElementById("lrc_content").innerHTML;
+        var oLRC = {
+            ti: "", //歌曲名
+            ar: "", //演唱者
+            al: "", //专辑名
+            by: "", //歌词制作人
+            offset: 0, //时间补偿值，单位毫秒，用于调整歌词整体位置
+            ms: [] //歌词数组{t:时间,c:歌词}
+        };
+        var oPlay = document.getElementsByClassName('play')[0];
+        var oPause = document.getElementsByClassName('pause')[0];
+        var oPrev = document.getElementsByClassName('prev')[0];
+        var oNext = document.getElementsByClassName('next')[0];
+        var solid = document.getElementsByClassName('solid')[0];
+        var list = document.getElementsByClassName('list')[0];
+        var oBtn = document.getElementsByClassName('btn')[0];
+
+        oBtn.onclick = function () {
+            if (window.localStorage) {
+                var data = document.getElementById('return').innerText;
+                localStorage.value = data;
+                location.href = '../../index.html'
+            } else {
+                alert('不支持Html5')
+            }
+        }
+        // 设置播放器的属性
+        Audio.setAttribute("src", MusicPlaying)
+        Audio.setAttribute("autoplay", "autoplay")
+
+        function listName(obj) {
+            for (var key in obj) {
+                if (obj.hasOwnProperty(key)) {
+                    const element = obj[key];
+                    var musicListName = document.createElement("span");
+                    musicListName.innerText = element.musicName;
+                    list.appendChild(musicListName)
+                }
+            }
+        }
+        listName(songList)
+
+        // 播放/暂停
+        function play() {
+            if (playstatus) {
+                Audio.pause()
+                playstatus = false
+                oPause.style.display = 'none'
+                oPlay.style.display = 'block'
+            } else {
+                Audio.play()
+                playstatus = true
+                oPlay.style.display = 'none'
+                oPause.style.display = 'block'
+                curBar()
+                changeTime()
+                changeTimeing()
+            }
+        }
+        oPlay.onclick = play
+        oPause.onclick = play
+
+        // 进度条时间同步
+        function curBar() {
+            solid.style.width = 0 + "px";
+            timer1 = setInterval(function () {
+                //获取当前的播放时间
+                lenth = Audio.duration;
+                cur = Audio.currentTime;
+                // 当前时间 / 总时间 = 百分比
+                // 百分比 * 进度条长度 = 播放时间长度进度
+                solid.style.width = "" + parseFloat(cur / lenth) * 200 + "px";
+            }, 50)
+        }
+
+        // 获取歌曲播放总时间 转换为分：秒 
+        function changeTime() {
+            let dur = Audio.duration
+            let min = parseInt(dur / 60)
+            let sec = parseInt(dur % 60)
+            let songtimed = document.getElementsByClassName('songtimed')[0];
+            if (min < 10) {
+                if (sec < 10) {
+                    songtimed.innerHTML = '0' + min + ':' + '0' + sec
+                } else {
+                    songtimed.innerHTML = '0' + min + ':' + sec
+                }
+            } else {
+                if (sec < 10) {
+                    songtimed.innerHTML = min + ':' + '0' + sec
+                } else {
+                    songtimed.innerHTML = min + ':' + sec
+                }
+            }
+        }
+        // 歌曲正在播放的时间 转换为分：秒
+        function changeTimeing(params) {
+            setInterval(() => {
+                cur = Audio.currentTime
+                let min = parseInt(cur / 60)
+                let sec = parseInt(cur % 60)
+                if (min < 10) {
+                    if (sec < 10) {
+                        let songtiming = document.getElementsByClassName('songtiming')[0];
+                        songtiming.innerHTML = '0' + min + ":" + '0' + sec
+                    } else {
+                        let songtiming = document.getElementsByClassName('songtiming')[0];
+                        songtiming.innerHTML = '0' + min + ":" + sec
+                    }
+                } else {
+                    if (sec < 10) {
+                        let songtiming = document.getElementsByClassName('songtiming')[0];
+                        songtiming.innerHTML = min + ":" + '0' + sec
+                    } else {
+                        let songtiming = document.getElementsByClassName('songtiming')[0];
+                        songtiming.innerHTML = min + ":" + sec
+                    }
+                }
+            }, 50);
+        }
+
+        //调整播放进度
+        function changeProgress(e) {
+            let bar = e.target;
+            let x = e.offsetX;
+            console.log(x)
+            console.log(e)
+            let lenth = Audio.duration;
+            solid.style.width = x + "px";
+            Audio.currentTime = "" + parseInt(x * lenth / 200) + "";
+            Audio.play();
+        }
+
+        //切换歌曲
+        function nextIndex() {
+            if (PlayingIndex > songList.length - 1) {
+                PlayingIndex = songList.length - 1
+                alert('没有更多了o(╥﹏╥)o')
+            } else {
+                PlayingIndex++
+                MusicPlaying = songList[PlayingIndex].musicSrc;
+                Audio.setAttribute("src", MusicPlaying)
+                //监听播放器src改变后，获取歌曲长度
+                Audio.addEventListener("canplay", function () {
+                    Audio.play()
+                    curBar()
+                    changeTime()
+                    changeTimeing()
+                });
+            }
+        }
+        oNext.onclick = nextIndex
+        function backIndex() {
+            if (PlayingIndex <= 0) {
+                PlayingIndex = 0
+                alert('已经是第一首了o(╥﹏╥)o')
+            } else {
+                PlayingIndex--
+                MusicPlaying = songList[PlayingIndex].musicSrc;
+                Audio.setAttribute("src", MusicPlaying)
+                //监听播放器src改变后，获取歌曲长度
+                Audio.addEventListener("canplay", function () {
+                    Audio.play()
+                    curBar()
+                    changeTime()
+                    changeTimeing()
+                });
+            }
+        }
+        oPrev.onclick = backIndex
+        // 播放完自动下一曲
+        Audio.onended = function () {
+            console.log("音频播放完成");
+            //清空定时器和一些属性
+            if (timer1) {
+                clearInterval(timer1)
+            }
+            nextIndex()
+        };
+
+        // 解析歌词
+        function createLrcObj(lrc) {
+            if (lrc.length == 0) return;
+            var lrcs = lrc.split('\n');//用回车拆分成数组
+            for (var i in lrcs) {//遍历歌词数组
+                lrcs[i] = lrcs[i].replace(/(^\s*)|(\s*$)/g, ""); //去除前后空格
+                var t = lrcs[i].substring(lrcs[i].indexOf("[") + 1, lrcs[i].indexOf("]"));//取[]间的内容
+                var s = t.split(":");//分离:前后文字
+                if (isNaN(parseInt(s[0]))) { //不是数值
+                    for (var i in oLRC) {
+                        if (i != "ms" && i == s[0].toLowerCase()) {
+                            oLRC[i] = s[1];
+                        }
+                    }
+                } else { //是数值
+                    var arr = lrcs[i].match(/\[(\d+:.+?)\]/g);//提取时间字段，可能有多个
+                    var start = 0;
+                    for (var k in arr) {
+                        start += arr[k].length; //计算歌词位置
+                    }
+                    var content = lrcs[i].substring(start);//获取歌词内容
+                    for (var k in arr) {
+                        var t = arr[k].substring(1, arr[k].length - 1);//取[]间的内容
+                        var s = t.split(":");//分离:前后文字
+                        oLRC.ms.push({//对象{t:时间,c:歌词}加入ms数组
+                            t: (parseFloat(s[0]) * 60 + parseFloat(s[1])).toFixed(3),
+                            c: content
+                        });
+                    }
+                }
+            }
+            oLRC.ms.sort(function (a, b) {//按时间顺序排序
+                return a.t - b.t;
+            });
+        }
+        createLrcObj(lrc);
+        // 展现歌词
+        function showLRC() {
+            var songLrc = "";
+            for (var i in oLRC.ms) {//遍历ms数组，把歌词加入列表
+                songLrc += '<div data-timeline="' + parseInt(oLRC.ms[i].t) + '">' + oLRC.ms[i].c + '</div>';
+            }
+            document.getElementsByClassName("lrc")[0].innerHTML = songLrc;
+        }
+        showLRC();
+        Audio.addEventListener('timeupdate', function (e) {
+            var time = parseInt(e.target.currentTime);
+            var lines = document.querySelectorAll('[data-timeline]');
+            var top = 0;
+            var _thisHeight = 0;
+            var nextLine = {
+                i: 0,
+                time: 0
+            };
+            for (var i in lines) {
+                var line = lines[i];
+                if (line.dataset != undefined) {
+                    var timeline = parseInt(line.dataset.timeline);
+                    if (timeline == time) {
+                        _thisHeight = line.clientHeight;
+                        line.className = "selection";
+                        //获取下一句歌词
+                        nextLine.i = parseInt(i) + 1;
+                        try {
+                            nextLine.time = lines[nextLine.i].dataset.timeline;
+                        }
+                        catch (e) {
+                        }
+                        if (nextLine.time > 0) {
+                            var interval = nextLine.time - timeline;
+                            (function (k) {
+                                setTimeout(function () {
+                                    lines[k].className = "";
+                                }, interval * 1000);
+                            })(i);
+                        }
+                        var a = -(top - _thisHeight) + "px"
+                        document.querySelector('.lrc').style.transform = "translateY(" + a + ")";
+                    }
+                    else if (timeline < time) {
+                        top += line.clientHeight;
+                    }
+                }
+            }
+        })
+    </script>
+</body>
+
+</html>

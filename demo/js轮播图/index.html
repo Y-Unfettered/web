@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>js轮播图</title>
+    <link rel="stylesheet" href="../../Share/css/Share.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .container {
+            width: 1200px;
+            height: 600px;
+            /* background-color: #000; */
+            margin: 66px auto;
+            border: 1px solid #ccc;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .imgBox {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            /* background-color: #fff; */
+        }
+
+        .imgBox .oUl {
+            width: 6000px;
+            height: 100%;
+            position: absolute;
+            left: 0px;
+        }
+
+        .imgBox .oUl li {
+            width: 1200px;
+            height: 600px;
+            float: left;
+        }
+
+        .imgBox .oUl li img {
+            width: 100%;
+            height: 100%;
+        }
+
+        .index {
+            width: 1200px;
+            height: 60px;
+            /* background-color: #000; */
+            line-height: 60px;
+            text-align: center;
+            position: absolute;
+            bottom: 0px;
+        }
+
+        .index .active {
+            background-color: #000;
+        }
+
+
+        .index i {
+            width: 10px;
+            height: 10px;
+            display: inline-block;
+            border-radius: 50%;
+            background-color: #ccc;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .index i:hover {
+            opacity: 0.5;
+        }
+
+        .oBtn {
+            opacity: 0.5;
+        }
+
+        .oBtn:hover {
+            opacity: 1;
+        }
+
+        .oBtn .oBtn-left {
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            line-height: 60px;
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            margin-top: -30px;
+            left: 10px;
+            border-radius: 50%;
+            background-color: #ccc;
+            cursor: pointer;
+        }
+
+        .oBtn .oBtn-right {
+            width: 60px;
+            height: 60px;
+            font-size: 24px;
+            line-height: 60px;
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            margin-top: -30px;
+            right: 10px;
+            border-radius: 50%;
+            background-color: #ccc;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 昨天写了自动切换选项卡，今天来写一个常见并常用的demo 轮播图 -->
+    <div class="container">
+        <div class="imgBox">
+            <ul class="oUl">
+                <li>
+                    <img src="img/13.png" alt="">
+                </li>
+                <li>
+                    <img src="img/20.png" alt="">
+                </li>
+                <li>
+                    <img src="img/32.png" alt="">
+                </li>
+                <li>
+                    <img src="img/37.png" alt="">
+                </li>
+                <li>
+                    <img src="img/shou.png" alt="">
+                </li>
+            </ul>
+        </div>
+        <div class="index">
+            <i class="active"></i>
+            <i></i>
+            <i></i>
+            <i></i>
+            <i></i>
+        </div>
+        <div class="oBtn">
+            <span class="oBtn-left">&lt;</span>
+        </div>
+        <div class="oBtn">
+            <span class="oBtn-right">&gt;</span>
+        </div>
+    </div>
+    <div class="btn">
+        <svg t="1559616228111" class="icon" style="" viewBox="0 0 1024 1024" version="1.1"
+            xmlns="http://www.w3.org/2000/svg" p-id="3375" xmlns:xlink="http://www.w3.org/1999/xlink" width="200"
+            height="200">
+            <defs>
+                <style type="text/css"></style>
+            </defs>
+            <path
+                d="M340.992 238.907077h284.16c219.766154 0 397.863385 166.951385 397.863385 372.854154 0 205.942154-178.136615 372.854154-397.863385 372.854154H0v-106.535385h625.152c156.947692 0 284.199385-119.217231 284.199385-266.318769 0-147.062154-127.212308-266.318769-284.199385-266.318769H340.992V238.907077z"
+                fill="#008DFF" p-id="3376"></path>
+            <path d="M56.832 292.194462l397.824-213.07077v426.141539z" fill="#008DFF" p-id="3377"></path>
+        </svg>
+        <span id="return">demo</span>
+    </div>
+
+    <script>
+        var oUl = document.getElementsByClassName('oUl')[0];
+        var oLi = document.getElementsByTagName('li');
+        var oI = document.getElementsByTagName('i');
+        var oBtnLeft = document.getElementsByClassName('oBtn-left')[0];
+        var oBtnRight = document.getElementsByClassName('oBtn-right')[0];
+        var oBox = document.getElementsByClassName('container')[0];
+        var oBtn = document.getElementsByClassName('btn')[0];
+        var index = 0;
+        var boolen = true;
+        var timer = window.setInterval(autoMove, 3000);
+
+        oBtn.onclick = function () {
+            if (window.localStorage) {
+                var data = document.getElementById('return').innerText;
+                localStorage.value = data;
+                location.href = '../../index.html'
+            } else {
+                alert('不支持Html5')
+            }
+        }
+        
+        oBox.onmouseover = function () {
+            clearInterval(timer);
+        }
+
+        oBox.onmouseout = function () {
+            timer = window.setInterval(autoMove, 3000)
+        }
+
+        oBtnLeft.onclick = function () {
+            autoMove(-1)
+        }
+
+        oBtnRight.onclick = function () {
+            autoMove(1)
+        }
+
+        function autoMove(params) {
+            if (boolen) {
+                boolen = false;
+                if (params == 1 || !params) {
+                    index++;
+                    if (index == oLi.length) {
+                        index = 0
+                    }
+                    move(index)
+                    chengeIndex(index)
+                } else if (params == -1) {
+                    if (index == 0) {
+                        index = oLi.length - 1
+                    } else {
+                        index--
+                    }
+                    move(index)
+                    chengeIndex(index)
+                }
+            }
+        }
+
+        function move(params) {
+            oUl.style.left = params * -1200 + 'px';
+            boolen = true
+        }
+
+        function chengeIndex(index) {
+            for (var i = 0; i < oI.length; i++) {
+                oI[i].className = ""
+            }
+            oI[index].className = "active"
+        }
+
+        for (var i = 0; i < oI.length; i++) {
+            oI[i].onclick = (function (i) {
+                return function () {
+                    index = i;
+                    chengeIndex(index);
+                    move(index);
+                }
+            })(i)
+        }
+
+    </script>
+</body>
+
+</html>
